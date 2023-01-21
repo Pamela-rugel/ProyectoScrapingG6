@@ -1,0 +1,215 @@
+---
+title: "Avance 2"
+author: "Grupo 6"
+date: "21/1/2023"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Visualización de Datos
+
+Luego de haber scrappeado las páginas que ofrecen empleos en el ámbito de desarrolladores a nivel nacional, se obtiene el archivo "final.csv" el cual es el data frame a usarse para responder a las preguntas del proyecto por medio de una visualización con el uso de R.
+
+```{r library}
+library(readr)
+library(stringr)
+library(ggplot2)
+library(dplyr)
+datos_final <- read.csv("C:\\Users\\Alan\\Downloads\\final.csv")
+summary(datos_final)
+```
+
+## Filtramos datos por modalidad
+Para realizar la filtración de modalidad, nos basamos en la descripción del empleo en el cual se obtiene información acerca del tipo de trabajo que se ofrece, en este caso nos importa la modalidad, para esto usamos la función str_detect para poder usar su subfunción "regex" con el fin de poder escribir una expresión regular, y además colocamos el valor de TRUE en ignore_case para que no importe si se encuentra escrita entre las mayúsculas o minúsculas. Hay que tener en cuenta que habrán descripciones en las que no se mencione la modalidad. Pero con estos datos se va a trabajar para responder algunas preguntas.
+
+```{r datos }
+#PRESENCIAL
+descripcion <- datos_final$descripcion_empleo
+presencial <- str_detect(descripcion, regex("presencial|(\\s+|,|^)on site(\\s+|,|$)", ignore_case = TRUE)) 
+desc_presencial <- descripcion[presencial]
+
+#REMOTO
+remota <- str_detect(descripcion, regex("remote|remota|remoto", ignore_case = TRUE))
+desc_remota <- descripcion[remota]
+
+#HÍBRIDO
+hibrido <- str_detect(descripcion, regex("híbrido|híbrida|hybrid|hibrido|hibrida|semipresencial", ignore_case = TRUE))
+desc_hibrido <- descripcion[hibrido]
+
+```
+## Preguntas Alan
+### Pregunta 1 ¿Qué lenguajes de programación son los más solicitados por modalidad de trabajo?
+```{r lenguajes AB, echo = FALSE}
+#PRESENCIAL 
+#PHP
+php_pres <- str_detect(desc_presencial, regex("php|laravel", ignore_case = TRUE))
+
+#Javascript
+javascript_pres <- str_detect(desc_presencial, regex("javascript|js|react", ignore_case = TRUE))
+
+
+
+#python
+python_pres <- str_detect(desc_presencial, regex("python|django", ignore_case = TRUE))
+
+#c#
+csharp_pres <- str_detect(desc_presencial, regex("c#", ignore_case = TRUE))
+
+
+#java
+java_pres <- str_detect(desc_presencial,"(\\s+|,|^)[Jj]ava(\\s+|,|$)")
+
+
+
+lenguajes_pres <- c("PHP","JavaScript","Python","C#","Java")
+valores_pres <- c(sum(python_pres == TRUE),sum(javascript_pres == TRUE),sum(python_pres == TRUE),
+                  sum(csharp_pres==TRUE),sum(java_pres==TRUE))
+
+############DATA FRAME PRESENCIAL     ##################
+df_pres <- data.frame("lenguajes"=lenguajes_pres,"valores"=valores_pres)
+df_pres <- cbind(df_pres,Modalidad="Presencial")
+
+
+#REMOTA ######################
+#PHP
+php_remo <- str_detect(desc_remota, regex("php|laravel", ignore_case = TRUE))
+
+#Javascript
+javascript_remo <- str_detect(desc_remota, regex("javascript|js|react", ignore_case = TRUE))
+
+
+#python
+python_remo <- str_detect(desc_remota, regex("python|django", ignore_case = TRUE))
+
+#c#
+csharp_remo <- str_detect(desc_remota, regex("c#", ignore_case = TRUE))
+
+
+#java
+java_remo <- str_detect(desc_remota,"(\\s+|,|^)[Jj]ava(\\s+|,|$)")
+
+######DATA FRAME ##################
+lenguajes_remo <- c("PHP","JavaScript","Python","C#","Java")
+valores_remo <- c(sum(python_remo == TRUE),sum(javascript_remo == TRUE),sum(python_remo == TRUE),
+                  sum(csharp_remo==TRUE),sum(java_remo==TRUE))
+
+df_remo <- data.frame("lenguajes" = lenguajes_remo,"valores"=valores_remo)
+df_remo <-  cbind(df_remo,Modalidad="Remoto")
+
+##HIBRIDO
+#PHP
+php_hibrid <- str_detect(desc_hibrido, regex("php|laravel", ignore_case = TRUE))
+
+#Javascript
+javascript_hibrid <- str_detect(desc_hibrido, regex("javascript|js|react", ignore_case = TRUE))
+
+#python
+python_hibrid <- str_detect(desc_hibrido, regex("python|django", ignore_case = TRUE))
+
+#c#
+csharp_hibrid <- str_detect(desc_hibrido, regex("c#", ignore_case = TRUE))
+
+
+#java
+java_hibrid <- str_detect(desc_hibrido,"(\\s+|,|^)[Jj]ava(\\s+|,|$)")
+
+
+
+######### DATA FRAME #########
+lenguajes_hibrid <- c("PHP","JavaScript","Python","C#","Java")
+valores_hibrid <- c(sum(python_hibrid == TRUE),sum(javascript_hibrid == TRUE),sum(python_hibrid == TRUE),
+                  sum(csharp_hibrid==TRUE),sum(java_hibrid==TRUE))
+
+df_hibrid <- data.frame("lenguajes"=lenguajes_hibrid,"valores"=valores_hibrid)
+df_hibrid <-  cbind(df_hibrid,Modalidad="Hibrido")
+
+
+###### MERGE DE LAS 3 DATA FRAMES ###################
+df_final <- merge(x=df_pres,y=df_remo, by = "lenguajes")
+
+df_temp <- rbind(df_pres, df_remo)
+df_final <- rbind(df_temp,df_hibrid)
+
+
+  
+```
+```{r grafica}
+###GRAFICA####
+ggplot(df_final, aes(x=lenguajes, y=valores,fill=Modalidad))+
+  geom_bar(stat = "identity")+
+  labs(title="Lenguajes más solicitados por Modalidad",
+       x ="Lenguaje", y = "Ofertas de empleo")
+
+```
+
+## Pregunta 2 ¿Qué lenguajes de back-end son los más solicitados?
+
+```{r pregunta 2 AB, echo=FALSE}
+#Lenguajes backend
+library(dplyr)
+#PHP
+php <- str_detect(descripcion, regex("php|laravel", ignore_case = TRUE))
+phpCant<-sum(php == TRUE)
+#Java
+java <- str_detect(descripcion,"(\\s+|,|^)[Jj]ava(\\s+|,|$)")
+javaCant<-sum(java==TRUE)
+#Ruby
+ruby <- str_detect(descripcion, regex("ruby", ignore_case = TRUE))
+rubyCant<-sum(ruby == TRUE)
+#Python
+python <- str_detect(descripcion, regex("python|django", ignore_case = TRUE))
+pythonCant<-sum(python == TRUE)
+
+
+
+```
+
+
+```{r grafica2 AB}
+valor_leng<- c(phpCant,javaCant,rubyCant,pythonCant)
+datospr2 <- data.frame("lenguaje" = c("PHP","Java","Ruby","Python"),
+                       "valor" = valor_leng)
+
+#Porcentaje
+porcentaje <- datospr2 %>% 
+  group_by(lenguaje) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(percentage=valor_leng/sum(valor_leng) * 100) 
+##Grafica de pastel ######
+
+ggplot(porcentaje, aes(x="", y=percentage,fill=lenguaje))+
+  geom_bar(stat="identity", width=1) +
+  geom_text(aes(label = paste0(round(percentage,1),"%")), 
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") + 
+  labs(title= "Lenguajes mas solicitados para Backend")+
+  theme_void() 
+
+```
+
+## Pregunta 3 ¿Para qué modalidad se solicita más el lenguaje Python?
+```{r pregunta 3 AB}
+python_presCant <- sum(python_pres==TRUE)
+python_remoCant <- sum(python_remo==TRUE)
+python_hibridCant <- sum(python_hibrid==TRUE)
+python_mods <- python_presCant+python_remoCant+python_hibridCant
+
+#no menciona modalidad##
+python_noMenc <- pythonCant - python_mods
+
+python_final <- data.frame("modalidad" = c("Presencial", "Remoto","Híbrido", "No menciona"),
+                           "valor" = c(python_presCant,python_remoCant,python_hibridCant, python_noMenc))
+
+```
+```{r grafica3 AB}
+ggplot(python_final, aes(x=modalidad, y=valor, fill=modalidad)) + 
+  geom_bar(stat="identity")+
+  geom_text(aes(label = valor))+
+  theme_bw()+
+  labs(title= "Ofertas de empleo para Python por Modalidad",
+         x="Modalidad", y="Ofertas de empleo")
+```

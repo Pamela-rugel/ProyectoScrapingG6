@@ -13,8 +13,5 @@ urlJoraPt2 = '&q=Software+developer&sp=search&surl=0&tk=LY7GRVzLKKkhT_hHHCIz-K0X
 #puts "Freelancers"
 #Freelancer.new.extraerData(urlFreelancer)
 
-# puts "GrabJobs"
-# GrabJobs.new.extraerData(urlGrabJobs)
-
-puts "Jora"
-Jora.new.extraerData(urlJoraPt1,urlJoraPt2)
+puts "GrabJobs"
+GrabJobs.new.extraerData(urlGrabJobs)
