@@ -12,3 +12,12 @@ urlGrabJobs = 'https://grabjobs.co/ecuador/jobs?q=desarrollador+developer+softwa
 
 puts "GrabJobs"
 GrabJobs.new.extraerData(urlGrabJobs)
+
+#------------------------------------------- UNIENDO LOS CSV  -------------------------------------------
+CSV.open("final.csv", "wb", write_headers: true, headers: ["num", "titulo_empleo", "descripcion_empleo", "etiquetas_empleo"]) do |csv|
+    Dir["csvfiles/*.csv"].each do |path|  
+      CSV.foreach(path, headers: true, return_headers: false) do |row| 
+        csv << row 
+      end
+    end
+  end
