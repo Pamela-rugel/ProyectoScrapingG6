@@ -1,6 +1,6 @@
 class Freelancer
   def extraerData(url)
-    CSV.open('Freelancer.csv', 'wb') do |csv|
+    CSV.open('csvfiles/Freelancer.csv', 'wb') do |csv|
       csv << %w[num titulo_empleo descripcion_empleo etiquetas_empleo]
       conf=0; pagina=1
       while (pagina<150)
