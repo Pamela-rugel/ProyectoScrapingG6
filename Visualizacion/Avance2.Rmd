@@ -18,7 +18,7 @@ library(readr)
 library(stringr)
 library(ggplot2)
 library(dplyr)
-datos_final <- read.csv("C:\\Users\\Alan\\Downloads\\final.csv")
+datos_final <- read.csv("final.csv")
 summary(datos_final)
 ```
 
@@ -212,4 +212,47 @@ ggplot(python_final, aes(x=modalidad, y=valor, fill=modalidad)) +
   theme_bw()+
   labs(title= "Ofertas de empleo para Python por Modalidad",
          x="Modalidad", y="Ofertas de empleo")
+```
+
+## Pregunta 7 ¿Perfiles más buscados de desarrolladores? 
+
+``` {r }
+#Desarrollador Frontend
+frontend <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Ff]ront-?end)|([Ff]ront-?end)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE)) 
+
+#Desarrollador Backend
+backend <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Bb]ack-?end)|([Bb]ack-?end)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE))
+
+#Desarrollador FullStack
+fullstack <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Ff]ullstack)|([Ff]ullstack)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE)) 
+
+#Desarrollador web
+web <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es))\\s*[Ww]eb)|([Ww]eb)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE)) 
+
+#Desarrollador movil
+movil <- str_detect(descripcion, regex("(\\s+|,|^)[Dd]esarroll(o|ador(es)?)\\s*[Dd]e\\s*[Aa]p(ps?|licaciones)\\s*([Mm][óo]vil(es)?)?(\\s+|,|$)", ignore_case = TRUE)) 
+```
+
+## Pregunta 8 ¿La habilidad “comunicación” es más requerida en modalidades remotas e híbrida que en modalidades presenciales?
+
+
+```{r}
+
+comunicacion_pres <- str_detect(desc_presencial, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
+
+comunicacion_rem <- str_detect(desc_remota, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
+
+comunicacion_hib <- str_detect(desc_hibrido, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
+
+```
+
+
+## Pregunta 9 ¿Saber inglés es importante para desenvolverse en el ámbito del desarrollo de software?
+
+```{r}
+#menciones de ingles 
+ingles <- str_detect(descripcion, regex("(\\s+|,|^)([Ii]ngl[eé]s|[Ee]nglish)(\\s+|,|$)", ignore_case = TRUE))  
+no_ingles = (length(descripcion) - sum(ingles == TRUE))
+#no_ingles 
+
 ```
