@@ -218,19 +218,44 @@ ggplot(python_final, aes(x=modalidad, y=valor, fill=modalidad)) +
 
 ``` {r }
 #Desarrollador Frontend
-frontend <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Ff]ront-?end)|([Ff]ront-?end)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE)) 
+frontend <- str_detect(descripcion,
+regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Ff]ront-?end)|([Ff]ront-?end)\\s*([Dd]evelopers?))(\\s+|,|$)", 
+ignore_case = TRUE)) 
 
 #Desarrollador Backend
-backend <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Bb]ack-?end)|([Bb]ack-?end)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE))
+backend <- str_detect(descripcion, 
+regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Bb]ack-?end)|([Bb]ack-?end)\\s*([Dd]evelopers?))(\\s+|,|$)", 
+ignore_case = TRUE))
 
 #Desarrollador FullStack
-fullstack <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Ff]ullstack)|([Ff]ullstack)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE)) 
+fullstack <- str_detect(descripcion,
+regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Ff]ullstack)|([Ff]ullstack)\\s*([Dd]evelopers?))(\\s+|,|$)", 
+ignore_case = TRUE)) 
 
 #Desarrollador web
-web <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es))\\s*[Ww]eb)|([Ww]eb)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE)) 
+web <- str_detect(descripcion,
+regex("(\\s+|,|^)((([Dd]esarrollador(es))\\s*[Ww]eb)|([Ww]eb)\\s*([Dd]evelopers?))(\\s+|,|$)", 
+ignore_case = TRUE)) 
 
 #Desarrollador movil
-movil <- str_detect(descripcion, regex("(\\s+|,|^)[Dd]esarroll(o|ador(es)?)\\s*[Dd]e\\s*[Aa]p(ps?|licaciones)\\s*([Mm][óo]vil(es)?)?(\\s+|,|$)", ignore_case = TRUE)) 
+movil <- str_detect(descripcion,
+regex("(\\s+|,|^)[Dd]esarroll(o|ador(es)?)\\s*[Dd]e\\s*[Aa]p(ps?|licaciones)\\s*([Mm][óo]vil(es)?)?(\\s+|,|$)", 
+ignore_case = TRUE)) 
+```
+```{r }
+
+## Diagrama de barras ######
+pregunta_7 <- data.frame("perfiles" = c("Frontend", "Backend","Fullstack", "Web", "Móvil"),
+                           "valor" = c(sum(frontend==TRUE),sum(backend==TRUE),sum(fullstack==TRUE),                                         sum(web==TRUE),sum(movil==TRUE)))
+
+ggplot(pregunta_7, aes(x=valor, y=perfiles, fill=perfiles)) + 
+  geom_bar(stat="identity", orientation = "y")+
+  geom_text(aes(label = valor))+
+  theme_bw()+
+  labs(title= "Ofertas de empleo por Perfil de Desarrollador",
+         x="Ofertas de empleo", y="Perfiles")
+
+?"ggplot"
 ```
 
 ## Pregunta 8 ¿La habilidad “comunicación” es más requerida en modalidades remotas e híbrida que en modalidades presenciales?
@@ -238,21 +263,59 @@ movil <- str_detect(descripcion, regex("(\\s+|,|^)[Dd]esarroll(o|ador(es)?)\\s*[
 
 ```{r}
 
-comunicacion_pres <- str_detect(desc_presencial, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
+com_pres <- str_detect(desc_presencial, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
 
-comunicacion_rem <- str_detect(desc_remota, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
+com_rem <- str_detect(desc_remota, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
 
-comunicacion_hib <- str_detect(desc_hibrido, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
+com_hib <- str_detect(desc_hibrido, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
 
+
+## Gráfica de dona ######
+valores<- c(sum(com_hib == TRUE),sum(com_pres == TRUE),sum(com_rem == TRUE))
+datospr8 <- data.frame("modalidad" = c("Híbrida","Presencial","Remota"),
+                       "valor" = valores)
+porcentaje <- datospr8 %>% 
+  group_by(modalidad) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(percentage=valores/sum(valores) * 100) 
+
+ggplot(porcentaje,aes(x=2,y=percentage, fill=modalidad))+
+  geom_bar(stat = "identity", width=1)+
+  geom_text(aes(label = paste0(round(percentage,1),"%")), 
+            position = position_stack(vjust = 0.5))+
+  coord_polar(theta = "y")+
+  labs(title="Comunicación por modalidad")+
+  theme_void()+
+  xlim(0.5,2.5)
 ```
 
 
 ## Pregunta 9 ¿Saber inglés es importante para desenvolverse en el ámbito del desarrollo de software?
 
 ```{r}
-#menciones de ingles 
-ingles <- str_detect(descripcion, regex("(\\s+|,|^)([Ii]ngl[eé]s|[Ee]nglish)(\\s+|,|$)", ignore_case = TRUE))  
+## Menciones de inglés 
+ingles <- str_detect(descripcion, regex("(\\s+|,|^)([Ii]ngl[eé]s|[Ee]nglish)(\\s+|,|$)", ignore_case = TRUE)) 
+ingles <- sum(ingles == TRUE)
 no_ingles = (length(descripcion) - sum(ingles == TRUE))
 #no_ingles 
+
+## Gráfica de pastel ######
+valores<- c(ingles, no_ingles)
+datospr9 <- data.frame("label" = c("Inglés","No inglés"),
+                       "valor" = valores)
+porcentaje <- datospr9 %>% 
+  group_by(label) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(percentage=valores/sum(valores) * 100) 
+
+ggplot(porcentaje, aes(x="", y=percentage, fill=label))+
+  geom_bar(stat="identity", width=1) +
+  geom_text(aes(label = paste0(round(percentage,1),"%")), 
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") + 
+  labs(title= "Inglés en el ámbito del desarrollo de software")+
+  theme_void()
 
 ```
