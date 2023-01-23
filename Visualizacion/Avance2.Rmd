@@ -28,7 +28,7 @@ Para realizar la filtración de modalidad, nos basamos en la descripción del em
 ```{r datos }
 #PRESENCIAL
 descripcion <- datos_final$descripcion_empleo
-presencial <- str_detect(descripcion, regex("presencial|(\\s+|,|^)on site(\\s+|,|$)", ignore_case = TRUE)) 
+presencial <- str_detect(descripcion, regex("presencial|(\\s+|,|^)on site(\\s+|,|$)", ignore_case = TRUE))
 desc_presencial <- descripcion[presencial]
 
 #REMOTO
@@ -43,7 +43,7 @@ desc_hibrido <- descripcion[hibrido]
 ## Preguntas Alan
 ### Pregunta 1 ¿Qué lenguajes de programación son los más solicitados por modalidad de trabajo?
 ```{r lenguajes AB, echo = FALSE}
-#PRESENCIAL 
+#PRESENCIAL
 #PHP
 php_pres <- str_detect(desc_presencial, regex("php|laravel", ignore_case = TRUE))
 
@@ -134,7 +134,7 @@ df_temp <- rbind(df_pres, df_remo)
 df_final <- rbind(df_temp,df_hibrid)
 
 
-  
+
 ```
 ```{r grafica}
 ###GRAFICA####
@@ -174,20 +174,20 @@ datospr2 <- data.frame("lenguaje" = c("PHP","Java","Ruby","Python"),
                        "valor" = valor_leng)
 
 #Porcentaje
-porcentaje <- datospr2 %>% 
-  group_by(lenguaje) %>% 
-  count() %>% 
-  ungroup() %>% 
-  mutate(percentage=valor_leng/sum(valor_leng) * 100) 
+porcentaje <- datospr2 %>%
+  group_by(lenguaje) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(percentage=valor_leng/sum(valor_leng) * 100)
 ##Grafica de pastel ######
 
 ggplot(porcentaje, aes(x="", y=percentage,fill=lenguaje))+
   geom_bar(stat="identity", width=1) +
-  geom_text(aes(label = paste0(round(percentage,1),"%")), 
+  geom_text(aes(label = paste0(round(percentage,1),"%")),
             position = position_stack(vjust = 0.5)) +
-  coord_polar(theta = "y") + 
+  coord_polar(theta = "y") +
   labs(title= "Lenguajes mas solicitados para Backend")+
-  theme_void() 
+  theme_void()
 
 ```
 
@@ -206,14 +206,14 @@ python_final <- data.frame("modalidad" = c("Presencial", "Remoto","Híbrido", "N
 
 ```
 ```{r grafica3 AB}
-ggplot(python_final, aes(x=modalidad, y=valor, fill=modalidad)) + 
+ggplot(python_final, aes(x=modalidad, y=valor, fill=modalidad)) +
   geom_bar(stat="identity")+
   geom_text(aes(label = valor))+
   theme_bw()+
   labs(title= "Ofertas de empleo para Python por Modalidad",
          x="Modalidad", y="Ofertas de empleo")
 ```
-## Pregunta 4 ¿Qué frameworks son los más solicitados? 
+## Pregunta 4 ¿Qué frameworks son los más solicitados?
 ```{r pregunta 1 JJ, echo=FALSE}
 #Lenguajes backend
 library(dplyr)
@@ -230,31 +230,31 @@ flutterCant<-sum(flutter == TRUE)
 ```
 
 
-```{r grafica 1 JJ}
+```{r JJ}
 valores_frame <- c(vueCant,angularCant,flutterCant)
 datospr3 <- data.frame("framework" = c("Vue","Angular","Flutter"),
                        "valor" = valores_frame)
 
 #Porcentaje
-porcentaje_frame <- datospr3  %>% 
-  group_by(framework) %>% 
-  count() %>% 
-  ungroup() %>% 
-  mutate(percentage=valores_frame/sum(valores_frame) * 100) 
+porcentaje_frame <- datospr3  %>%
+  group_by(framework) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(percentage=valores_frame/sum(valores_frame) * 100)
 ##Grafica de pastel ######
 
 ggplot(porcentaje_frame, aes(x="", y=percentage,fill=framework))+
   geom_bar(stat="identity", width=1) +
-  geom_text(aes(label = paste0(round(percentage,1),"%")), 
+  geom_text(aes(label = paste0(round(percentage,1),"%")),
             position = position_stack(vjust = 0.5)) +
-  coord_polar(theta = "y") + 
+  coord_polar(theta = "y") +
   labs(title= "Frameworks más solicitados")+
-  theme_void() 
+  theme_void()
 
 ```
 
 ## Pregunta 5 ¿En qué modalidad es más solicitado el framework Vue?
-```{r pregunta 2 JJ, echo = FALSE}
+```{r JJ, echo = FALSE}
 vue_pres <- str_detect(desc_presencial, regex("vue", ignore_case = TRUE))
 
 vue_remo <-str_detect(desc_remota, regex("vue", ignore_case = TRUE))
@@ -270,9 +270,9 @@ df_vue <- data.frame("Modalidad"= c("Presencial","Remoto","Híbrido"),
                      "Valores" = c(sum(vue_pres==TRUE),sum(vue_remo==TRUE),sum(vue_hibrid==TRUE)))
 
 ```
-```{r grafica 1 JJ}
+```{r JJ}
 
-ggplot(df_vue, aes(x=Modalidad, y=Valores,fill=Modalidad)) + 
+ggplot(df_vue, aes(x=Modalidad, y=Valores,fill=Modalidad)) +
   geom_bar(stat="identity")+
   geom_text(aes(label = Valores))+
   theme_bw()+
@@ -281,12 +281,10 @@ ggplot(df_vue, aes(x=Modalidad, y=Valores,fill=Modalidad)) +
 ```
 
 ## Pregunta 6 ¿Cuáles son las habilidades más solicitadas para la modalidad presencial?
-```{r pregunta 3 JJ, echo = FALSE}
+```{r JJ, echo = FALSE}
 
 responsabilidad <- str_detect(descripcion,regex("responsabilidad|responsability|responsable", ignore_case = TRUE))
-sum(responsabilidad == TRUE)
 creativo <- str_detect(descripcion,regex("creatividad|creativo|creative|creativa", ignore_case = TRUE))
-sum(creativo == TRUE)
 ingles <- str_detect(descripcion,regex("inglés|ingles|english", ignore_case = TRUE))
 equipo <- str_detect(descripcion,regex("(\\s+|,|^)([Tt]eamwork|[Tt]rabajo en equipo|[Cc]olaboraci[oó]n)(\\s+|,|$)"))
 df_habilidades <- data.frame("Habilidades" = c("Responsable", "Creativo","Inglés","Trabajo en equipo"),
@@ -296,57 +294,120 @@ df_habilidades <- data.frame("Habilidades" = c("Responsable", "Creativo","Inglé
 
 ```{r grafica 3 JJ}
 
-ggplot(df_habilidades, aes(x=Habilidades, y=valor,fill=Habilidades)) + 
+ggplot(df_habilidades, aes(x=Habilidades, y=valor,fill=Habilidades)) +
   geom_bar(stat="identity")+
   geom_text(aes(label = valor))+
   theme_bw()+
   labs(title= "Habilidades más solicitadas para modalidad presencial",
        x="Habilidad", y="Valor")+
    coord_flip()
-  
+
 ```
 
 
 
-## Pregunta 7 ¿Perfiles más buscados de desarrolladores? 
+## Pregunta 7 ¿Perfiles más buscados de desarrolladores?
 
-``` {r }
+``` {r PR}
 #Desarrollador Frontend
-frontend <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Ff]ront-?end)|([Ff]ront-?end)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE)) 
+frontend <- str_detect(descripcion,
+regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Ff]ront-?end)|([Ff]ront-?end)\\s*([Dd]evelopers?))(\\s+|,|$)",
+ignore_case = TRUE))
 
 #Desarrollador Backend
-backend <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Bb]ack-?end)|([Bb]ack-?end)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE))
+backend <- str_detect(descripcion,
+regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Bb]ack-?end)|([Bb]ack-?end)\\s*([Dd]evelopers?))(\\s+|,|$)",
+ignore_case = TRUE))
 
 #Desarrollador FullStack
-fullstack <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Ff]ullstack)|([Ff]ullstack)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE)) 
+fullstack <- str_detect(descripcion,
+regex("(\\s+|,|^)((([Dd]esarrollador(es)\\s*)?[Ff]ullstack)|([Ff]ullstack)\\s*([Dd]evelopers?))(\\s+|,|$)",
+ignore_case = TRUE))
 
 #Desarrollador web
-web <- str_detect(descripcion, regex("(\\s+|,|^)((([Dd]esarrollador(es))\\s*[Ww]eb)|([Ww]eb)\\s*([Dd]evelopers?))(\\s+|,|$)", ignore_case = TRUE)) 
+web <- str_detect(descripcion,
+regex("(\\s+|,|^)((([Dd]esarrollador(es))\\s*[Ww]eb)|([Ww]eb)\\s*([Dd]evelopers?))(\\s+|,|$)",
+ignore_case = TRUE))
 
 #Desarrollador movil
-movil <- str_detect(descripcion, regex("(\\s+|,|^)[Dd]esarroll(o|ador(es)?)\\s*[Dd]e\\s*[Aa]p(ps?|licaciones)\\s*([Mm][óo]vil(es)?)?(\\s+|,|$)", ignore_case = TRUE)) 
+movil <- str_detect(descripcion,
+regex("(\\s+|,|^)[Dd]esarroll(o|ador(es)?)\\s*[Dd]e\\s*[Aa]p(ps?|licaciones)\\s*([Mm][óo]vil(es)?)?(\\s+|,|$)",
+ignore_case = TRUE))
+```
+```{r PR}
+
+## Diagrama de barras ######
+pregunta_7 <- data.frame("perfiles" = c("Frontend", "Backend","Fullstack", "Web", "Móvil"),
+                           "valor" = c(sum(frontend==TRUE),sum(backend==TRUE),sum(fullstack==TRUE),                                         sum(web==TRUE),sum(movil==TRUE)))
+
+ggplot(pregunta_7, aes(x=valor, y=perfiles, fill=perfiles)) +
+  geom_bar(stat="identity", orientation = "y")+
+  geom_text(aes(label = valor))+
+  theme_bw()+
+  labs(title= "Ofertas de empleo por Perfil de Desarrollador",
+         x="Ofertas de empleo", y="Perfiles")
+
 ```
 
 ## Pregunta 8 ¿La habilidad “comunicación” es más requerida en modalidades remotas e híbrida que en modalidades presenciales?
 
 
-```{r}
+```{r PR}
 
-comunicacion_pres <- str_detect(desc_presencial, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
+com_pres <- str_detect(desc_presencial, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
 
-comunicacion_rem <- str_detect(desc_remota, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
+com_rem <- str_detect(desc_remota, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
 
-comunicacion_hib <- str_detect(desc_hibrido, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
+com_hib <- str_detect(desc_hibrido, regex("(\\s+|,|^)([Cc]omunicaci[oó]n|[Cc]omunication)(\\s+|,|$)", ignore_case = TRUE))
 
+```
+```{r PR}
+## Gráfica de dona ######
+valores<- c(sum(com_hib == TRUE),sum(com_pres == TRUE),sum(com_rem == TRUE))
+datospr8 <- data.frame("modalidad" = c("Híbrida","Presencial","Remota"),
+                       "valor" = valores)
+porcentaje <- datospr8 %>%
+  group_by(modalidad) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(percentage=valores/sum(valores) * 100)
+
+ggplot(porcentaje,aes(x=2,y=percentage, fill=modalidad))+
+  geom_bar(stat = "identity", width=1)+
+  geom_text(aes(label = paste0(round(percentage,1),"%")),
+            position = position_stack(vjust = 0.5))+
+  coord_polar(theta = "y")+
+  labs(title="Comunicación por modalidad")+
+  theme_void()+
+  xlim(0.5,2.5)
 ```
 
 
 ## Pregunta 9 ¿Saber inglés es importante para desenvolverse en el ámbito del desarrollo de software?
 
-```{r}
-#menciones de ingles 
-ingles <- str_detect(descripcion, regex("(\\s+|,|^)([Ii]ngl[eé]s|[Ee]nglish)(\\s+|,|$)", ignore_case = TRUE))  
+```{r PR}
+## Menciones de inglés
+ingles <- str_detect(descripcion, regex("(\\s+|,|^)([Ii]ngl[eé]s|[Ee]nglish)(\\s+|,|$)", ignore_case = TRUE))
+ingles <- sum(ingles == TRUE)
 no_ingles = (length(descripcion) - sum(ingles == TRUE))
-#no_ingles 
+#no_ingles
+
+## Gráfica de pastel ######
+valores<- c(ingles, no_ingles)
+datospr9 <- data.frame("label" = c("Inglés","No inglés"),
+                       "valor" = valores)
+porcentaje <- datospr9 %>%
+  group_by(label) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(percentage=valores/sum(valores) * 100)
+
+ggplot(porcentaje, aes(x="", y=percentage, fill=label))+
+  geom_bar(stat="identity", width=1) +
+  geom_text(aes(label = paste0(round(percentage,1),"%")),
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  labs(title= "Inglés en el ámbito del desarrollo de software")+
+  theme_void()
 
 ```
