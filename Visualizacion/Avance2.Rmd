@@ -213,6 +213,100 @@ ggplot(python_final, aes(x=modalidad, y=valor, fill=modalidad)) +
   labs(title= "Ofertas de empleo para Python por Modalidad",
          x="Modalidad", y="Ofertas de empleo")
 ```
+## Pregunta 4 ¿Qué frameworks son los más solicitados? 
+```{r pregunta 1 JJ, echo=FALSE}
+#Lenguajes backend
+library(dplyr)
+#Vue
+vue <- str_detect(descripcion, regex("vue|vue.js", ignore_case = TRUE))
+vueCant<-sum(php == TRUE)
+#Angular
+angular <- str_detect(descripcion,regex("angular|angular.js", ignore_case= TRUE))
+angularCant<-sum(angular==TRUE)
+#Flutter
+flutter <- str_detect(descripcion, regex("flutter", ignore_case = TRUE))
+flutterCant<-sum(flutter == TRUE)
+
+```
+
+
+```{r grafica 1 JJ}
+valores_frame <- c(vueCant,angularCant,flutterCant)
+datospr3 <- data.frame("framework" = c("Vue","Angular","Flutter"),
+                       "valor" = valores_frame)
+
+#Porcentaje
+porcentaje_frame <- datospr3  %>% 
+  group_by(framework) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(percentage=valores_frame/sum(valores_frame) * 100) 
+##Grafica de pastel ######
+
+ggplot(porcentaje_frame, aes(x="", y=percentage,fill=framework))+
+  geom_bar(stat="identity", width=1) +
+  geom_text(aes(label = paste0(round(percentage,1),"%")), 
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") + 
+  labs(title= "Frameworks más solicitados")+
+  theme_void() 
+
+```
+
+## Pregunta 5 ¿En qué modalidad es más solicitado el framework Vue?
+```{r pregunta 2 JJ, echo = FALSE}
+vue_pres <- str_detect(desc_presencial, regex("vue", ignore_case = TRUE))
+
+vue_remo <-str_detect(desc_remota, regex("vue", ignore_case = TRUE))
+
+vue_hibrid <-str_detect(desc_hibrido, regex("vue", ignore_case = TRUE))
+
+
+vue_noMenc <- str_detect(descripcion, regex("vue", ignore_case = TRUE))
+
+
+
+df_vue <- data.frame("Modalidad"= c("Presencial","Remoto","Híbrido"),
+                     "Valores" = c(sum(vue_pres==TRUE),sum(vue_remo==TRUE),sum(vue_hibrid==TRUE)))
+
+```
+```{r grafica 1 JJ}
+
+ggplot(df_vue, aes(x=Modalidad, y=Valores,fill=Modalidad)) + 
+  geom_bar(stat="identity")+
+  geom_text(aes(label = Valores))+
+  theme_bw()+
+  labs(title= "Ofertas de empleo para Vue por Modalidad",
+       x="Modalidad", y="Ofertas de empleo")
+```
+
+## Pregunta 6 ¿Cuáles son las habilidades más solicitadas para la modalidad presencial?
+```{r pregunta 3 JJ, echo = FALSE}
+
+responsabilidad <- str_detect(descripcion,regex("responsabilidad|responsability|responsable", ignore_case = TRUE))
+sum(responsabilidad == TRUE)
+creativo <- str_detect(descripcion,regex("creatividad|creativo|creative|creativa", ignore_case = TRUE))
+sum(creativo == TRUE)
+ingles <- str_detect(descripcion,regex("inglés|ingles|english", ignore_case = TRUE))
+equipo <- str_detect(descripcion,regex("(\\s+|,|^)([Tt]eamwork|[Tt]rabajo en equipo|[Cc]olaboraci[oó]n)(\\s+|,|$)"))
+df_habilidades <- data.frame("Habilidades" = c("Responsable", "Creativo","Inglés","Trabajo en equipo"),
+                             "valor" = c(sum(responsabilidad == TRUE),sum(creativo == TRUE),sum(ingles == TRUE),
+                                         sum(equipo == TRUE)))
+```
+
+```{r grafica 3 JJ}
+
+ggplot(df_habilidades, aes(x=Habilidades, y=valor,fill=Habilidades)) + 
+  geom_bar(stat="identity")+
+  geom_text(aes(label = valor))+
+  theme_bw()+
+  labs(title= "Habilidades más solicitadas para modalidad presencial",
+       x="Habilidad", y="Valor")+
+   coord_flip()
+  
+```
+
+
 
 ## Pregunta 7 ¿Perfiles más buscados de desarrolladores? 
 
